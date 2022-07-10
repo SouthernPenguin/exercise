@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  1、判断缓存里是否有点击后的时间 <br />
+  2、记录加载页面的时间
+  3、判断记录的时间和加载的时候是否超过规定的时间
+
+  disabled="true"
+  <br>
+  <button id="btn">按</button>
+  <script>
+    let btn = document.getElementById('btn')
+    let countDown = 30 // 倒计时30s
+
+    let loadingTime = Date.now(); // 页面加载是的时间
+
+    calc()
+    //计算时间差
+    function calc() {
+      let onClickTime = localStorage.getItem('onClickTime') * 1
+
+      let timeDifference = loadingTime - onClickTime // 时间戳差
+      let timeDifferenceSeconds = new Date(timeDifference).getSeconds() // 时间戳差转秒
+      let calcTime = countDown - timeDifferenceSeconds // 设定好的倒计时减去时间差 = 正在倒计时的时间
+      if (timeDifferenceSeconds < countDown) {
+        // 当前时间 减去 缓存的时间
+        let time = setInterval(() => {
+          calcTime--
+          btn.innerText = `${calcTime}s`
+          if (calcTime <= 0) {
+            clearInterval(time)
+            btn.disabled = false
+            countDown = 30
+            btn.innerHTML = '点击'
+          }
+        }, 1000);
+        btn.disabled = true
+      } else {
+        btn.disabled = false
+        countDown = 30
+        btn.innerHTML = '点击'
+      }
+    }
+
+
+    btn.onclick = () => {
+      let atPresent = Date.now(); // 页面加载是的时间
+      localStorage.setItem('onClickTime', atPresent)
+      btn.disabled = true
+      let time = setInterval(() => {
+        countDown--
+        btn.innerText = `${countDown}s`
+        localStorage.setItem('countDown', countDown)
+        if (countDown <= 0) {
+          clearInterval(time)
+          countDown = 30
+          btn.innerHTML = '点击'
+          btn.disabled = false
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+
+</html>
